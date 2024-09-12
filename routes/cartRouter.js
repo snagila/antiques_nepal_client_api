@@ -8,6 +8,7 @@ import {
   findProductInUserCart,
   getProductsOnCart,
   updateProductOnCart,
+  updateProductQuantity,
 } from "../models/cartModel.js";
 import { userAuth } from "../middlewares/auth/userAuth.js";
 
@@ -20,18 +21,18 @@ cartRouter.post("/", async (req, res) => {
     const { productId, quantity, price, total } = cartItem;
     // console.log(cartItem);
     // find if product already exists so you can increase its totaling
-    const findProductOnCart = await findProductInUserCart(userID, productId);
-    if (findProductOnCart) {
-      const updatedProduct = await updateProductOnCart(
-        userID,
-        productId,
-        quantity,
-        Number(price),
-        total
-      );
+    // const findProductOnCart = await findProductInUserCart(userID, productId);
+    // if (findProductOnCart) {
+    //   const updatedProduct = await updateProductOnCart(
+    //     userID,
+    //     productId,
+    //     quantity,
+    //     Number(price),
+    //     total
+    //   );
 
-      return buildSuccessResponse(res, updatedProduct, "");
-    }
+    //   return buildSuccessResponse(res, updatedProduct, "");
+    // }
 
     const addProduct = await addProductToCart(userID, cartItem);
     if (addProduct) {
@@ -53,6 +54,25 @@ cartRouter.get("/", userAuth, async (req, res) => {
     }
   } catch (error) {
     console.log("routererror:", error.message);
+    buildErrorResponse(res, error.message);
+  }
+});
+
+// edit items quantity on cart
+cartRouter.patch("/editcart/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { productIdOnCart, productQuantity } = req.body;
+    const updatedProductQuantity = await updateProductQuantity(
+      id,
+      productIdOnCart,
+      productQuantity
+    );
+    if (updatedProductQuantity) {
+      return buildSuccessResponse(res, updatedProductQuantity, "");
+    }
+  } catch (error) {
+    console.log(error.message);
     buildErrorResponse(res, error.message);
   }
 });
