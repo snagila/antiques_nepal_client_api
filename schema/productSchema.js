@@ -56,6 +56,11 @@ const productSchema = new mongoose.Schema(
         required: true,
       },
     ],
+    reviews: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     timestamps: true,

@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectToMongoDb } from "./config/dbConfig.js";
 import { categoryRouter } from "./routes/categoryRouter.js";
 import { productRouter } from "./routes/productRouter.js";
+import { userRouter } from "./routes/userRouter.js";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -15,6 +16,7 @@ app.use(express.json());
 // routes
 app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
+app.use("/api/user", userRouter);
 
 // Connect to Database
 connectToMongoDb();
