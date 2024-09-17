@@ -5,14 +5,25 @@ export const addProductToCart = (userId, cartItem) => {
   return cartSchema({ userId, ...cartItem }).save();
 };
 
+// increase product Quantity
+export const increaseProductQuantity = (cartID, quantity, price) => {
+  return cartSchema.findOneAndUpdate(
+    { _id: cartID },
+    { $inc: { quantity: quantity, totalPrice: price * quantity } }
+  );
+};
+
 // get the user product card
 export const getProductsOnCart = (userId) => {
   return cartSchema.find({ userId });
 };
 
 // find the product in the cart
-export const findProductInUserCart = (userID, productId) => {
-  return cartSchema.findOne({ userId: userID, "items.productId": productId });
+export const findtheProductForUser = (userID, productId) => {
+  return cartSchema.findOne({
+    userId: userID,
+    productId: productId,
+  });
 };
 
 // update product quantity on cart

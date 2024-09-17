@@ -6,8 +6,9 @@ import {
 import {
   addProductToCart,
   deleteCartItems,
-  findProductInUserCart,
+  findtheProductForUser,
   getProductsOnCart,
+  increaseProductQuantity,
   updateProductQuantity,
 } from "../models/cartModel.js";
 import { userAuth } from "../middlewares/auth/userAuth.js";
@@ -19,9 +20,28 @@ cartRouter.post("/", async (req, res) => {
   try {
     const { userID, cartItem } = req.body;
 
-    const addProduct = await addProductToCart(userID, cartItem);
-    if (addProduct) {
-      buildSuccessResponse(res, addProduct, "");
+    const { quantity, availableQuantity, productId, price } = cartItem;
+
+    // check if the product already exists for the user
+    const cartID = await findtheProductForUser(userID, productId);
+
+    if (cartID?._id) {
+      if (cartID.quantity === availableQuantity) {
+        return buildErrorResponse(res, `Maximum ${cartID.name} in the cart.`);
+      }
+      const addproduct = await increaseProductQuantity(
+        cartID._id,
+        quantity,
+        price
+      );
+      if (addproduct) {
+        buildSuccessResponse(res, addproduct, "");
+      }
+    } else {
+      const addProduct = await addProductToCart(userID, cartItem);
+      if (addProduct) {
+        buildSuccessResponse(res, addProduct, "");
+      }
     }
   } catch (error) {
     console.log("routererror:", error.message);

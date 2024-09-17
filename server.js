@@ -6,6 +6,7 @@ import { categoryRouter } from "./routes/categoryRouter.js";
 import { productRouter } from "./routes/productRouter.js";
 import { userRouter } from "./routes/userRouter.js";
 import { cartRouter } from "./routes/cartRouter.js";
+import { wishListRouter } from "./routes/wishListRouter.js";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -19,6 +20,7 @@ app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
 app.use("/api/user", userRouter);
 app.use("/api/cart", cartRouter);
+app.use("/api/wishlist", wishListRouter);
 
 // Connect to Database
 connectToMongoDb();

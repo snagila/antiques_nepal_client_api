@@ -1,31 +1,5 @@
 import mongoose from "mongoose";
 
-// Define the schema for each item in the cart
-const cartItemSchema = new mongoose.Schema({
-  productId: {
-    type: String,
-    required: true,
-  },
-  name: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: String,
-    required: true,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-  },
-
-  thumbnail: [
-    {
-      type: String,
-    },
-  ],
-});
-
 const cartSchema = new mongoose.Schema({
   userId: {
     type: String,
@@ -46,10 +20,10 @@ const cartSchema = new mongoose.Schema({
   },
   quantity: {
     type: Number,
-    required: true,
+    default: 1,
   },
   totalPrice: {
-    type: Number, // Store the calculated total price
+    type: Number,
   },
   sku: {
     type: String,
