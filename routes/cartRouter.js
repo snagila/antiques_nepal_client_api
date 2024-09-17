@@ -5,9 +5,9 @@ import {
 } from "../utility/responseHelper.js";
 import {
   addProductToCart,
+  deleteCartItems,
   findProductInUserCart,
   getProductsOnCart,
-  updateProductOnCart,
   updateProductQuantity,
 } from "../models/cartModel.js";
 import { userAuth } from "../middlewares/auth/userAuth.js";
@@ -18,21 +18,6 @@ export const cartRouter = express.Router();
 cartRouter.post("/", async (req, res) => {
   try {
     const { userID, cartItem } = req.body;
-    const { productId, quantity, price, total } = cartItem;
-    // console.log(cartItem);
-    // find if product already exists so you can increase its totaling
-    // const findProductOnCart = await findProductInUserCart(userID, productId);
-    // if (findProductOnCart) {
-    //   const updatedProduct = await updateProductOnCart(
-    //     userID,
-    //     productId,
-    //     quantity,
-    //     Number(price),
-    //     total
-    //   );
-
-    //   return buildSuccessResponse(res, updatedProduct, "");
-    // }
 
     const addProduct = await addProductToCart(userID, cartItem);
     if (addProduct) {
@@ -62,15 +47,31 @@ cartRouter.get("/", userAuth, async (req, res) => {
 cartRouter.patch("/editcart/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { productIdOnCart, productQuantity } = req.body;
+    const { productQuantity, itemPrice } = req.body;
     const updatedProductQuantity = await updateProductQuantity(
       id,
-      productIdOnCart,
-      productQuantity
+      productQuantity,
+      itemPrice
     );
     if (updatedProductQuantity) {
       return buildSuccessResponse(res, updatedProductQuantity, "");
     }
+  } catch (error) {
+    console.log(error.message);
+    buildErrorResponse(res, error.message);
+  }
+});
+
+// delete cart items
+cartRouter.delete("/:cartId", async (req, res) => {
+  try {
+    const { cartId } = req.params;
+
+    const result = await deleteCartItems(cartId);
+    if (result.acknowledged === true) {
+      return buildSuccessResponse(res, "", "");
+    }
+    buildErrorResponse(res, error.message);
   } catch (error) {
     console.log(error.message);
     buildErrorResponse(res, error.message);

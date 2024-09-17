@@ -2,7 +2,7 @@ import cartSchema from "../schema/cartSchema.js";
 
 // add product to the user cart
 export const addProductToCart = (userId, cartItem) => {
-  return cartSchema({ userId, items: [{ ...cartItem }] }).save();
+  return cartSchema({ userId, ...cartItem }).save();
 };
 
 // get the user product card
@@ -15,39 +15,21 @@ export const findProductInUserCart = (userID, productId) => {
   return cartSchema.findOne({ userId: userID, "items.productId": productId });
 };
 
-// update the single product in the cart this is the inc operator one
-export const updateProductOnCart = (
-  userID,
-  productId,
-  quantity,
-  price,
-  total
-) => {
+// update product quantity on cart
+export const updateProductQuantity = (cartId, productQuantity, itemPrice) => {
   return cartSchema.updateOne(
-    { userId: userID, "items.productId": productId },
+    { _id: cartId },
     {
-      $inc: {
-        "items.$.quantity": quantity,
-        // "items.$.price": price,
-        "items.$.total": price,
+      $set: {
+        quantity: productQuantity,
+        totalPrice: productQuantity * itemPrice,
       },
     },
     { new: true }
   );
 };
 
-// update product quantity on cart
-export const updateProductQuantity = (
-  cartId,
-  productIdOnCart,
-  productQuantity
-) => {
-  return cartSchema.findOneAndUpdate(
-    {
-      _id: cartId,
-      "items._id": productIdOnCart,
-    },
-    { $set: { "items.$.quantity": productQuantity } },
-    { new: true }
-  );
+// delete cart items
+export const deleteCartItems = (cartId) => {
+  return cartSchema.deleteOne({ _id: cartId });
 };

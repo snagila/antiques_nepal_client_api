@@ -31,7 +31,40 @@ const cartSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  items: [cartItemSchema],
+
+  productId: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: String,
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+  totalPrice: {
+    type: Number, // Store the calculated total price
+  },
+  sku: {
+    type: String,
+  },
+  availableQuantity: { type: Number },
+  thumbnail: [
+    {
+      type: String,
+    },
+  ],
+});
+
+cartSchema.pre("save", function (next) {
+  this.totalPrice = this.quantity * this.price;
+  next();
 });
 
 export default mongoose.model("cart", cartSchema);
