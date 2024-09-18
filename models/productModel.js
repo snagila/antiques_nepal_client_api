@@ -9,3 +9,8 @@ export const getProducts = () => {
 export const getAProduct = (productSKU) => {
   return productSchema.findOne({ sku: productSKU });
 };
+
+// find a product
+export const findAProduct = (productSKU) => {
+  return productSchema.findOne({ sku: productSKU });
+};

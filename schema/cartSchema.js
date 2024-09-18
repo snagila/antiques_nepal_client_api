@@ -36,9 +36,4 @@ const cartSchema = new mongoose.Schema({
   ],
 });
 
-cartSchema.pre("save", function (next) {
-  this.totalPrice = this.quantity * this.price;
-  next();
-});
-
 export default mongoose.model("cart", cartSchema);
