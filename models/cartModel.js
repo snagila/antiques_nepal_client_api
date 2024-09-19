@@ -1,4 +1,6 @@
 import cartSchema from "../schema/cartSchema.js";
+import orderSchema from "../schema/orderSchema.js";
+import productSchema from "../schema/productSchema.js";
 
 // add product to the user cart
 export const addProductToCart = (userId, cartItem) => {
@@ -43,4 +45,27 @@ export const updateProductQuantity = (cartId, productQuantity, itemPrice) => {
 // delete cart items
 export const deleteCartItems = (cartId) => {
   return cartSchema.deleteOne({ _id: cartId });
+};
+
+// reduce the product quantity for all cart items
+export const updateProductAvaibaleQuantity = (sku, orderedQuantity) => {
+  return productSchema.findOneAndUpdate(
+    { sku },
+    { $inc: { quantity: -orderedQuantity } },
+    { new: true }
+  );
+};
+
+// place Order
+export const placeOrder = (cartItems, totalPrice, userId) => {
+  return orderSchema({
+    userId,
+    orderTotal: totalPrice,
+    orderItems: cartItems,
+  }).save();
+};
+
+// find user orders
+export const userOrder = (userId) => {
+  return orderSchema.find({ userId });
 };
