@@ -247,3 +247,24 @@ userRouter.get("/", userAuth, async (req, res) => {
     buildErrorResponse(res, error.message);
   }
 });
+
+// chnage user details
+userRouter.post("/update-details/:id", userAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateUserDetails = await updateUser(req.body.email, req.body);
+
+    if (updateUserDetails) {
+      const { password, role, ...rest } = updateUserDetails;
+      return buildSuccessResponse(res, rest, "Details Updated.");
+    }
+  } catch (error) {
+    console.log("router error", error.message);
+    buildErrorResponse(res, error.message);
+  }
+});
+
+// change userPassword from change password user page endpoint
+userRouter.post("/update-password/:id", userAuth, async (req, res) => {
+  console.log(req.body);
+});

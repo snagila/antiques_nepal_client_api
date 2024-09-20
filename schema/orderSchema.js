@@ -36,18 +36,21 @@ const orderItems = new mongoose.Schema({
   ],
 });
 
-const orderSchema = new mongoose.Schema({
-  userId: {
-    type: String,
+const orderSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: String,
+    },
+    orderTotal: {
+      type: String,
+    },
+    status: {
+      type: String,
+      default: "pending",
+    },
+    orderItems: [orderItems],
   },
-  orderTotal: {
-    type: String,
-  },
-  status: {
-    type: String,
-    default: "pending",
-  },
-  orderItems: [orderItems],
-});
+  { timestamps: true }
+);
 
 export default mongoose.model("order", orderSchema);
