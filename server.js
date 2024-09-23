@@ -8,6 +8,7 @@ import { userRouter } from "./routes/userRouter.js";
 import { cartRouter } from "./routes/cartRouter.js";
 import { wishListRouter } from "./routes/wishListRouter.js";
 import { stripeRouter } from "./routes/stripeRouter.js";
+import { orderRouter } from "./routes/orderRouter.js";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -23,6 +24,7 @@ app.use("/api/user", userRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/wishlist", wishListRouter);
 app.use("/api/stripe", stripeRouter);
+app.use("/api/order", orderRouter);
 
 // Connect to Database
 connectToMongoDb();

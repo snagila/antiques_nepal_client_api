@@ -48,6 +48,10 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: "pending",
     },
+    payment: {
+      type: String,
+      default: "pending",
+    },
     orderItems: [orderItems],
   },
   { timestamps: true }
