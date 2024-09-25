@@ -29,7 +29,6 @@ export const userRouter = express.Router();
 // create new user and send email verification.
 userRouter.post("/", newUserValidation, async (req, res) => {
   try {
-    // console.log(req.body);
     const { email, password } = req.body;
 
     const findUser = await findUserByEmail(email);
@@ -53,7 +52,7 @@ userRouter.post("/", newUserValidation, async (req, res) => {
 
       //sending verification link to the user
       if (newUserSession._id) {
-        const verificationUrl = `${process.env.CLIENT_ROOT_URL}/user/verify-useremail?e=${newUser.email}&id=${secureID}`;
+        const verificationUrl = `${process.env.CLIENT_ROOT_URL}/user/verify-email?e=${newUser.email}&id=${secureID}`;
         // sending email with the help of nodemailer
         sendVerificationLinkEmail(newUser, verificationUrl);
       }
@@ -144,7 +143,7 @@ userRouter.post("/reset-password", async (req, res) => {
       });
       if (newUserSession?._id) {
         // create verification link and send verification email
-        const verificationUrl = `${process.env.CLIENT_ROOT_URL}/reset-password/newpassword?e=${user.email}&id=${secureID}`;
+        const verificationUrl = `${process.env.CLIENT_ROOT_URL}/user/reset-password/newpassword?e=${user.email}&id=${secureID}`;
         // send the email
         sendResetPassword(user, verificationUrl);
       }
@@ -163,6 +162,7 @@ userRouter.post("/reset-password", async (req, res) => {
 // newPassword Update
 userRouter.post("/reset-password/newpassword", async (req, res) => {
   try {
+    console.log(req.body);
     const { password, token, userEmail } = req.body;
 
     // find user
@@ -267,4 +267,50 @@ userRouter.post("/update-details/:id", userAuth, async (req, res) => {
 // change userPassword from change password user page endpoint
 userRouter.post("/update-password/:id", userAuth, async (req, res) => {
   console.log(req.body);
+  try {
+    const { currentPassword, newPassword, userEmail } = req.body;
+    const findUser = await findUserByEmail(userEmail);
+    if (findUser) {
+      const checkPassword = comparePassword(currentPassword, findUser.password);
+
+      if (!checkPassword) {
+        return buildErrorResponse(res, "Your current password do not match.");
+      }
+      if (checkPassword) {
+        const hashedPassword = hashPassword(newPassword);
+        const changePassword = await updateUser(userEmail, {
+          password: hashedPassword,
+        });
+        console.log(changePassword);
+        if (changePassword) {
+          return buildSuccessResponse(
+            res,
+            "",
+            "Password Successfully Changed."
+          );
+        }
+      }
+    }
+  } catch (error) {
+    console.log("router error", error.message);
+    buildErrorResponse(res, error.message);
+  }
+});
+
+// logout user
+userRouter.post("/logout", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const [deleteSession, deleteRefreshJWT] = await Promise.all([
+      deletePreviousAccessTokens(email),
+      updateUser(email, { refreshJWT: "" }),
+    ]);
+    console.log(deleteSession, deleteRefreshJWT);
+    if (deleteSession && deleteRefreshJWT) {
+      buildSuccessResponse(res, "", "");
+    }
+  } catch (error) {
+    console.log("router error", error.message);
+    buildErrorResponse(res, error.message);
+  }
 });
