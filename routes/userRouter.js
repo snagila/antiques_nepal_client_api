@@ -305,7 +305,6 @@ userRouter.post("/logout", async (req, res) => {
       deletePreviousAccessTokens(email),
       updateUser(email, { refreshJWT: "" }),
     ]);
-    console.log(deleteSession, deleteRefreshJWT);
     if (deleteSession && deleteRefreshJWT) {
       buildSuccessResponse(res, "", "");
     }

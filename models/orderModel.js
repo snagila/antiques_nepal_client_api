@@ -1,11 +1,12 @@
 import orderSchema from "../schema/orderSchema.js";
 
 // place Order
-export const placeOrder = (cartItems, totalPrice, userId) => {
+export const placeOrder = (cartItems, totalPrice, userId, userAddress) => {
   return orderSchema({
     userId,
     orderTotal: totalPrice,
     orderItems: cartItems,
+    address: userAddress,
   }).save();
 };
 

@@ -14,7 +14,7 @@ export const orderRouter = express.Router();
 // place order
 orderRouter.post("/order", async (req, res) => {
   try {
-    const { cartItems, totalPrice, userId } = req.body;
+    const { cartItems, totalPrice, userId, userAddress } = req.body;
 
     const reduceProductAvailabeQuantity = cartItems?.map((item) =>
       updateProductAvaibaleQuantity(item.sku, item.quantity)
@@ -22,7 +22,7 @@ orderRouter.post("/order", async (req, res) => {
     await Promise.all(reduceProductAvailabeQuantity);
 
     if (reduceProductAvailabeQuantity) {
-      const sendOrder = placeOrder(cartItems, totalPrice, userId);
+      const sendOrder = placeOrder(cartItems, totalPrice, userId, userAddress);
       const deleterecentCartItems = cartItems?.map((item) =>
         deleteCartItems(item._id)
       );
