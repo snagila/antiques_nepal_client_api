@@ -15,6 +15,7 @@ export const orderRouter = express.Router();
 orderRouter.post("/order", async (req, res) => {
   try {
     const { cartItems, totalPrice, userId, userAddress } = req.body;
+    console.log(req.body);
 
     const reduceProductAvailabeQuantity = cartItems?.map((item) =>
       updateProductAvaibaleQuantity(item.sku, item.quantity)
